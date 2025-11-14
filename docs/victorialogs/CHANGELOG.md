@@ -21,6 +21,10 @@ according to the follosing docs:
 
 ## tip
 
+## [v1.38.0](https://github.com/VictoriaMetrics/VictoriaLogs/releases/tag/v1.38.0)
+
+Released at 2025-11-14
+
 * SECURITY: upgrade Go builder from Go1.25.3 to Go1.25.4. See [the list of issues addressed in Go1.25.4](https://github.com/golang/go/issues?q=milestone%3AGo1.25.4%20label%3ACherryPickApproved).
 
 * FEATURE: add an ability to delete stored logs. See [these docs](https://docs.victoriametrics.com/victorialogs/#how-to-delete-logs) and [#43](https://github.com/VictoriaMetrics/VictoriaLogs/issues/43). Thanks to @func25 for the initial idea and implementation at [#4](https://github.com/VictoriaMetrics/VictoriaLogs/pull/4).
