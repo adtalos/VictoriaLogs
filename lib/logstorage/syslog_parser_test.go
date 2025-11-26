@@ -122,4 +122,10 @@ func TestSyslogParser(t *testing.T) {
 	f(`Sep 29 08:26:10 host CEF`, time.UTC, `format=rfc3164 timestamp=2024-09-29T08:26:10Z hostname=host app_name=CEF`)
 	f(`Sep 29 08:26:10 host`, time.UTC, `format=rfc3164 timestamp=2024-09-29T08:26:10Z hostname=host`)
 	f(`Sep 29 08:26:10`, time.UTC, `format=rfc3164 timestamp=2024-09-29T08:26:10Z`)
+
+	// @cee
+	f(`Jun  3 12:08:33 abcd systemd[1]: @cee: {"k":"v","message":"test"}`, time.UTC,
+		`format=rfc3164 timestamp=2024-06-03T12:08:33Z hostname=abcd app_name=systemd proc_id=1 k=v message=test`)
+	f(`Jun  3 12:08:33 abcd systemd[1]: @cee: {"k":"v","message":"two words"}`, time.UTC,
+		`format=rfc3164 timestamp=2024-06-03T12:08:33Z hostname=abcd app_name=systemd proc_id=1 k=v message="two words"`)
 }

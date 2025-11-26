@@ -7,6 +7,7 @@ import (
 
 	"github.com/VictoriaMetrics/VictoriaMetrics/lib/bytesutil"
 	"github.com/VictoriaMetrics/VictoriaMetrics/lib/fasttime"
+	"github.com/VictoriaMetrics/VictoriaMetrics/lib/logger"
 )
 
 // GetSyslogParser returns syslog parser from the pool.
@@ -85,17 +86,26 @@ func (p *SyslogParser) resetFields() {
 }
 
 func (p *SyslogParser) AddMessageField(s string) {
-	if !strings.HasPrefix(s, "CEF:") {
-		p.AddField("message", s)
-		return
+	if strings.HasPrefix(s, "CEF:") {
+		fields := p.Fields
+		if p.parseCEFMessage(strings.TrimPrefix(s, "CEF:")) {
+			return
+		}
+		p.Fields = fields
 	}
 
-	s = strings.TrimPrefix(s, "CEF:")
-	fields := p.Fields
-	if p.parseCEFMessage(s) {
-		return
+	if strings.HasPrefix(s, "@cee:") {
+		jsonP := GetJSONParser()
+		defer PutJSONParser(jsonP)
+		jsonStr := strings.TrimPrefix(s, "@cee:")
+		if err := jsonP.ParseLogMessage(bytesutil.ToUnsafeBytes(jsonStr)); err == nil {
+			p.Fields = append(p.Fields, jsonP.Fields...)
+			return
+		} else {
+			logger.Warnf("parse @cee json fail, %s", jsonStr)
+		}
 	}
-	p.Fields = fields
+
 	p.AddField("message", s)
 }
 
